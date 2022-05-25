@@ -6,12 +6,15 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { EditorModule } from './editor/editor.module';
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    EditorModule,
+    // Default modules
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
