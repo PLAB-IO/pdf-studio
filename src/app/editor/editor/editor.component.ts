@@ -1,5 +1,20 @@
-import {AfterViewInit, Component, ElementRef, NgZone, ViewChild} from '@angular/core'
-import * as PIXI from 'pixi.js'
+import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core'
+import {dragEvent, hoverEvent} from "../elements/element-title.directive";
+import {style} from "@angular/animations";
+
+export type Element = {
+  name: string
+  id: string
+  x: number
+  y: number
+  value?: string
+  opts?: {
+    font?: {
+      size: number
+      bold: boolean
+    }
+  }
+}
 
 @Component({
   selector: 'app-editor',
@@ -8,131 +23,93 @@ import * as PIXI from 'pixi.js'
 })
 export class EditorComponent implements AfterViewInit {
 
-  @ViewChild('canvasEditor') canvasEditor!: ElementRef;
-  public pageHeight: number = 598
-  public pageWidth: number = 424
+  public pageHeight: string = '841.89pt'
+  public pageWidth: string = '595.28pt'
+  public elements: Element[] = []
 
-  private elements = []
-  private app!: PIXI.Application
-  private editorContainer!: PIXI.Container
+  public hoverFramePosition!: null | {height: string, width: string, transform: string}
 
-  constructor(public elRef: ElementRef, private zone: NgZone) {
+  private zoom = 1
+  private readonly maxHeight = 841.89
+  private readonly maxWidth = 595.28
+
+  private draggedElementEvent: dragEvent | null = null
+
+  constructor() {
+    this.pageHeight = (this.maxHeight * this.zoom) + 'pt'
+    this.pageWidth = (this.maxWidth * this.zoom) + 'pt'
+
+    this.elements.push({
+      id: 'abc',
+      name: 'title',
+      x: 100,
+      y: 10,
+      opts: {
+        font: {
+          size: 32,
+          bold: true,
+        }
+      }
+    })
+
+    this.elements.push({
+      id: 'xwed',
+      name: 'title',
+      x: 200,
+      y: 50,
+      value: 'Second Title'
+    })
   }
 
   ngAfterViewInit(): void {
-    this.zone.runOutsideAngular(
-      (): void => {
-        this.app = new PIXI.Application({
-          backgroundColor: 0xEEEEEE,
-          width: this.pageWidth,
-          height: this.pageHeight,
-          view: this.canvasEditor.nativeElement,
-        });
-
-        this.editorContainer = new PIXI.Container()
-        this.app.stage.addChild(this.editorContainer)
-
-        this.app.renderer.render(this.app.stage)
-      }
-    )
   }
 
-  cleanSlate() {
-    this.editorContainer.destroy()
-    this.editorContainer = new PIXI.Container()
-    this.app.stage.addChild(this.editorContainer)
-  }
-
-  async loadTemplate() {
-    // const el = PIXI.Sprite.from('assets/plab-logo-opti.png')
-    // el.anchor.set(0.5)
-    // el.x = this.app.screen.width / 2
-    // el.y = this.app.screen.height / 2
-    // el.scale.set(.2)
-    // el.interactive = true
-    // el.buttonMode = true
-    // el.on('pointerdown', this.onDragStart)
-    //   .on('pointerup', this.onDragEnd)
-    //   .on('pointerupoutside', this.onDragEnd)
-    //   .on('pointermove', this.onDragMove)
-    // this.editorContainer.addChild(el)
-
-    // TODO when click
-    // Add selection resizing square
-    // Add toolbox bar
-
-    this.app
-      .loader
-      .add("svgTest", "assets/plab-logo.svg")
-      .load((loader, res) => {
-        const svg = new PIXI.Sprite(res['svgTest'].texture)
-        svg.anchor.set(0.5)
-        svg.x = this.app.screen.width / 2
-        svg.y = this.app.screen.height / 2
-        svg.scale.set(.5)
-        svg.interactive = true
-        svg.buttonMode = true
-        svg.on('pointerdown', this.onDragStart)
-           .on('pointerup', this.onDragEnd)
-           .on('pointerupoutside', this.onDragEnd)
-           .on('pointermove', this.onDragMove)
-        this.editorContainer.addChild(svg)
-      })
-
-    const style = new PIXI.TextStyle({
-      fontFamily: 'Arial',
-      fontSize: 36,
-      fontStyle: 'italic',
-      fontWeight: 'bold',
-      fill: ['#ffffff', '#00ff99'], // gradient
-      stroke: '#4a1850',
-      strokeThickness: 5,
-      dropShadow: true,
-      dropShadowColor: '#000000',
-      dropShadowBlur: 4,
-      dropShadowAngle: Math.PI / 6,
-      dropShadowDistance: 6,
-      wordWrap: true,
-      wordWrapWidth: 440,
-      lineJoin: 'round',
-    });
-    const txt = new PIXI.Text("Foo bar baz", style)
-    txt.x = 50
-    txt.y = 100
-    this.editorContainer.addChild(txt)
-  }
-
-  onDragStart(event: any) {
-    // store a reference to the data
-    // the reason for this is because of multitouch
-    // we want to track the movement of this particular touch
-    // @ts-ignore
-    this.data = event.data;
-    // @ts-ignore
-    this.alpha = 0.5;
-    // @ts-ignore
-    this.dragging = true;
-  }
-
-  onDragEnd() {
-    // @ts-ignore
-    this.alpha = 1;
-    // @ts-ignore
-    this.dragging = false;
-    // set the interaction data to null
-    // @ts-ignore
-    this.data = null;
-  }
-
-  onDragMove() {
-    // @ts-ignore
-    if (this.dragging) {
-      // @ts-ignore
-      const newPosition = this.data.getLocalPosition(this.parent);
-      // @ts-ignore
-      this.x = newPosition.x;
-      // @ts-ignore
-      this.y = newPosition.y;
+  onPageMouseMove(e: any) {
+    if (!this.draggedElementEvent) {
+      return
     }
+
+    let newDx = e.pageX * 0.75 - this.draggedElementEvent.startX
+    let newDy = e.pageY * 0.75 - this.draggedElementEvent.startY
+    if (newDx > this.maxWidth * this.zoom) {
+      newDx = this.maxWidth * this.zoom
+    }
+    if (newDy > this.maxHeight * this.zoom) {
+      newDy = this.maxHeight  * this.zoom
+    }
+
+    this.draggedElementEvent.nativeElement.nativeElement.style.transform = `translate(${newDx}pt, ${newDy}pt)`
+    this.draggedElementEvent.element.x = newDx
+    this.draggedElementEvent.element.y = newDy
+
+    this.hoverFramePosition = {
+      width: this.draggedElementEvent.nativeElement.nativeElement.offsetWidth + 'px',
+      height: this.draggedElementEvent.nativeElement.nativeElement.offsetHeight + 'px',
+      transform: `translate(${newDx}pt, ${newDy}pt)`,
+    }
+  }
+
+  onDragEvent(e: dragEvent) {
+    if (!e.dragEnabled) {
+      this.draggedElementEvent = null
+      return
+    }
+    this.draggedElementEvent = e
+  }
+
+  onHoverElement(e: hoverEvent) {
+    if (!e.hover) {
+      this.hoverFramePosition = null
+      return
+    }
+    this.hoverFramePosition = {
+      width: e.elementRef.nativeElement.offsetWidth + 'px',
+      height: e.elementRef.nativeElement.offsetHeight + 'px',
+      transform: e.elementRef.nativeElement.style.transform,
+    }
+  }
+
+  info() {
+    console.log(this.elements)
   }
 }

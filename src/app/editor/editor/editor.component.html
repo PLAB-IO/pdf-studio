@@ -1,6 +1,18 @@
-<canvas #canvasEditor class="editor-boundary"></canvas>
+<div class="page" (mousemove)="onPageMouseMove($event)" [style.height]="pageHeight" [style.width]="pageWidth">
+  <div class="elementFrame" *ngIf="!!hoverFramePosition"
+       [style.width]="hoverFramePosition.width"
+       [style.height]="hoverFramePosition.height"
+       [style.transform]="hoverFramePosition.transform">
+    <div class="frame"></div>
+  </div>
 
-<br />
-<hr/>
-<button (click)="loadTemplate()">Load Template</button>
-<button (click)="cleanSlate()">Clean Slate</button>
+  <ng-container *ngFor="let el of elements">
+    <div *ngIf="'title' === el.name" appElementTitle
+         [contentEditable]="false"
+         [element]="el"
+         (hoverEvent)="onHoverElement($event)"
+         (dragEvent)="onDragEvent($event)"></div>
+  </ng-container>
+</div>
+
+<button (click)="info()">Show elements</button>

@@ -1,17 +1,13 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { EditorComponent } from './editor/editor.component';
-import { ElementTitleComponent } from './elements/element-title/element-title.component';
-import { ElementSvgComponent } from './elements/element-svg/element-svg.component';
-import {DragDropModule} from "@angular/cdk/drag-drop";
-
-
+import { NgModule } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { EditorComponent } from './editor/editor.component'
+import {DragDropModule} from "@angular/cdk/drag-drop"
+import { ElementTitleDirective } from './elements/element-title.directive'
 
 @NgModule({
   declarations: [
     EditorComponent,
-    ElementTitleComponent,
-    ElementSvgComponent
+    ElementTitleDirective
   ],
   imports: [
     CommonModule,
