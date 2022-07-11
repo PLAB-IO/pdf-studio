@@ -11,6 +11,7 @@
       <app-text-element *ngIf="'text' === el.name"
                         [element]="el"
                         [options]="el.opts"
+                        [zoom]="zoom"
                         (hoverEvent)="onHoverElement($event)"
                         (dragEvent)="onDragEvent($event)"></app-text-element>
     </ng-container>

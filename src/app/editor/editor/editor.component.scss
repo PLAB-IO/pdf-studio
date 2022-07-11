@@ -2,6 +2,7 @@
 
 :host {
   $ratio: 2px;
+  user-select: none;
 
   .page {
     border: dotted rgb(122, 122, 122) 2px;

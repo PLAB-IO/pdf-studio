@@ -9,7 +9,7 @@ import {dragEvent, hoverEvent} from "../elements/abstract-element.component";
 })
 export class EditorComponent implements AfterViewInit {
 
-  public zoom = 0.5
+  public zoom = 0.75
   public pageHeight: string = '841.89pt'
   public pageWidth: string = '595.28pt'
   public elements: Element[] = []
@@ -57,13 +57,8 @@ export class EditorComponent implements AfterViewInit {
       return
     }
 
-    console.log(e.pageX, this.draggedElementEvent.startX)
-
-    let newDx = (e.pageX * 0.75) - (this.draggedElementEvent.startX)
-    let newDy = (e.pageY * 0.75) - (this.draggedElementEvent.startY)
-
-    newDx = newDx * (1 / this.zoom)
-    newDy = newDy * (1 / this.zoom)
+    let newDx = (e.pageX * 0.75 / this.zoom) - this.draggedElementEvent.startX
+    let newDy = (e.pageY * 0.75 / this.zoom) - this.draggedElementEvent.startY
 
     if (newDx > this.maxWidth) {
       newDx = this.maxWidth
