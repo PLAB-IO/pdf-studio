@@ -4,10 +4,11 @@
   $ratio: 2px;
 
   .page {
-      border: dotted rgb(122, 122, 122) 2px;
-      position: relative;
-      overflow: hidden;
-      transform: scale(1);
+    border: dotted rgb(122, 122, 122) 2px;
+    position: relative;
+    overflow: hidden;
+    transform: scale(1);
+    transform-origin: 0 0;
   }
 
   .elementFrame {

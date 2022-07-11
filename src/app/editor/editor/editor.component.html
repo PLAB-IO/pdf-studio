@@ -1,18 +1,20 @@
-<div class="page" (mousemove)="onPageMouseMove($event)" [style.height]="pageHeight" [style.width]="pageWidth">
-  <div class="elementFrame" *ngIf="!!hoverFramePosition"
-       [style.width]="hoverFramePosition.width"
-       [style.height]="hoverFramePosition.height"
-       [style.transform]="hoverFramePosition.transform">
-    <div class="frame"></div>
-  </div>
+<div class="page-wrapper" [style.height]="this.maxHeight * zoom + 'pt'" [style.width]="this.maxWidth * zoom + 'pt'">
+  <div class="page" (mousemove)="onPageMouseMove($event)" [style.height]="pageHeight" [style.width]="pageWidth" [style.transform]="'scale(' + zoom + ')'">
+    <div class="elementFrame" *ngIf="!!hoverFramePosition"
+         [style.width]="hoverFramePosition.width"
+         [style.height]="hoverFramePosition.height"
+         [style.transform]="hoverFramePosition.transform">
+      <div class="frame"></div>
+    </div>
 
-  <ng-container *ngFor="let el of elements">
-    <div *ngIf="'title' === el.name" appElementTitle
-         [contentEditable]="false"
-         [element]="el"
-         (hoverEvent)="onHoverElement($event)"
-         (dragEvent)="onDragEvent($event)"></div>
-  </ng-container>
+    <ng-container *ngFor="let el of elements">
+      <app-text-element *ngIf="'text' === el.name"
+                        [element]="el"
+                        [options]="el.opts"
+                        (hoverEvent)="onHoverElement($event)"
+                        (dragEvent)="onDragEvent($event)"></app-text-element>
+    </ng-container>
+  </div>
 </div>
 
 <button (click)="info()">Show elements</button>

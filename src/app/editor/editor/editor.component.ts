@@ -1,20 +1,6 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core'
-import {dragEvent, hoverEvent} from "../elements/element-title.directive";
-import {style} from "@angular/animations";
-
-export type Element = {
-  name: string
-  id: string
-  x: number
-  y: number
-  value?: string
-  opts?: {
-    font?: {
-      size: number
-      bold: boolean
-    }
-  }
-}
+import {AfterViewInit, Component} from '@angular/core'
+import {Element} from "../shared/element-model"
+import {dragEvent, hoverEvent} from "../elements/abstract-element.component";
 
 @Component({
   selector: 'app-editor',
@@ -23,41 +9,43 @@ export type Element = {
 })
 export class EditorComponent implements AfterViewInit {
 
+  public zoom = 0.5
   public pageHeight: string = '841.89pt'
   public pageWidth: string = '595.28pt'
   public elements: Element[] = []
-
   public hoverFramePosition!: null | {height: string, width: string, transform: string}
 
-  private zoom = 1
-  private readonly maxHeight = 841.89
-  private readonly maxWidth = 595.28
+  public readonly maxHeight = 841.89
+  public readonly maxWidth = 595.28
 
   private draggedElementEvent: dragEvent | null = null
 
   constructor() {
-    this.pageHeight = (this.maxHeight * this.zoom) + 'pt'
-    this.pageWidth = (this.maxWidth * this.zoom) + 'pt'
+    // this.pageHeight = (this.maxHeight * this.zoom) + 'pt'
+    // this.pageWidth = (this.maxWidth * this.zoom) + 'pt'
+
+    this.pageHeight = (this.maxHeight) + 'pt'
+    this.pageWidth = (this.maxWidth) + 'pt'
 
     this.elements.push({
       id: 'abc',
-      name: 'title',
+      name: 'text',
       x: 100,
       y: 10,
+      value: '',
       opts: {
-        font: {
-          size: 32,
-          bold: true,
-        }
+        fontSize: 32,
+        bold: true,
       }
     })
 
     this.elements.push({
       id: 'xwed',
-      name: 'title',
+      name: 'text',
       x: 200,
       y: 50,
-      value: 'Second Title'
+      value: 'Second Title',
+      opts: {}
     })
   }
 
@@ -69,13 +57,19 @@ export class EditorComponent implements AfterViewInit {
       return
     }
 
-    let newDx = e.pageX * 0.75 - this.draggedElementEvent.startX
-    let newDy = e.pageY * 0.75 - this.draggedElementEvent.startY
-    if (newDx > this.maxWidth * this.zoom) {
-      newDx = this.maxWidth * this.zoom
+    console.log(e.pageX, this.draggedElementEvent.startX)
+
+    let newDx = (e.pageX * 0.75) - (this.draggedElementEvent.startX)
+    let newDy = (e.pageY * 0.75) - (this.draggedElementEvent.startY)
+
+    newDx = newDx * (1 / this.zoom)
+    newDy = newDy * (1 / this.zoom)
+
+    if (newDx > this.maxWidth) {
+      newDx = this.maxWidth
     }
-    if (newDy > this.maxHeight * this.zoom) {
-      newDy = this.maxHeight  * this.zoom
+    if (newDy > this.maxHeight) {
+      newDy = this.maxHeight
     }
 
     this.draggedElementEvent.nativeElement.nativeElement.style.transform = `translate(${newDx}pt, ${newDy}pt)`
