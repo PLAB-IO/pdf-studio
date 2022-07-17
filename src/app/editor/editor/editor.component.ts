@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core'
+import {Component, HostListener, OnInit} from '@angular/core'
 import {Element} from '../shared/element-model'
-import {Observable} from "rxjs";
+import {Observable} from "rxjs"
 import {EditorStore} from "../shared/store/editor.store"
 
 @Component({
@@ -16,17 +16,6 @@ export class EditorComponent implements OnInit {
   constructor(
     private readonly editorStore: EditorStore,
   ) {}
-
-  info() {
-  }
-
-  zoom(direction: boolean) {
-    if (direction) {
-      this.editorStore.zoomIn()
-    } else {
-      this.editorStore.zoomOut()
-    }
-  }
 
   ngOnInit(): void {
     this.elements.push({
@@ -49,5 +38,25 @@ export class EditorComponent implements OnInit {
       value: 'Second Title',
       opts: {}
     })
+  }
+
+  @HostListener('wheel', ['$event'])
+  handleMouseEvent(event: WheelEvent) {
+    if (event.ctrlKey) {
+      event.preventDefault()
+      if (event.deltaY < 0) {
+        this.editorStore.zoomIn()
+      } else {
+        this.editorStore.zoomOut()
+      }
+    }
+  }
+
+  zoom(direction: boolean) {
+    if (direction) {
+      this.editorStore.zoomIn()
+    } else {
+      this.editorStore.zoomOut()
+    }
   }
 }

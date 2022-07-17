@@ -54,11 +54,11 @@ export class PageComponent implements OnInit {
     this.draggedElementEvent.element.x = newDx
     this.draggedElementEvent.element.y = newDy
 
-    this.hoverFramePosition = {
-      width: this.draggedElementEvent.nativeElement.nativeElement.offsetWidth + 'px',
-      height: this.draggedElementEvent.nativeElement.nativeElement.offsetHeight + 'px',
-      transform: `translate(${newDx}pt, ${newDy}pt)`,
-    }
+    this.hoverFramePosition = await this.computeFrameBoxPosition(
+      this.draggedElementEvent.nativeElement.nativeElement.offsetWidth,
+      this.draggedElementEvent.nativeElement.nativeElement.offsetHeight,
+      this.draggedElementEvent.element,
+    )
   }
 
   onPageClick(e: any) {
@@ -77,17 +77,26 @@ export class PageComponent implements OnInit {
     this.draggedElementEvent = e
   }
 
-  onHoverElement(e: hoverEvent) {
+  async onHoverElement(e: hoverEvent) {
     if (!e.hover) {
       this.hoverFramePosition = null
       this.hoverElement = null
       return
     }
     this.hoverElement = e.element
-    this.hoverFramePosition = {
-      width: e.elementRef.nativeElement.offsetWidth + 'px',
-      height: e.elementRef.nativeElement.offsetHeight + 'px',
-      transform: e.elementRef.nativeElement.style.transform,
+    this.hoverFramePosition = await this.computeFrameBoxPosition(
+      e.elementRef.nativeElement.offsetWidth,
+      e.elementRef.nativeElement.offsetHeight,
+      e.element
+    )
+  }
+
+  private async computeFrameBoxPosition(offsetWidth: number, offsetHeight: number, element: Element) {
+    const zoom = await firstValueFrom(this.zoom$)
+    return {
+      width: Math.round((offsetWidth + 4) * zoom) + 'px',
+      height: Math.round((offsetHeight + 2) * zoom) + 'px',
+      transform: `translate(${element.x * zoom}pt, ${element.y * zoom}pt)`,
     }
   }
 
