@@ -1,6 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Element} from "../shared/element-model";
-import {dragEvent, hoverEvent} from "../elements/abstract-element.component";
+import {Component, Input, OnDestroy, OnInit} from '@angular/core'
+import {Element} from "../shared/element-model"
+import {dragEvent, hoverEvent} from "../elements/abstract-element.component"
+import {Store} from "@ngrx/store"
+import {firstValueFrom, Observable, Subscription} from "rxjs"
 
 @Component({
   selector: 'app-page',
@@ -11,7 +13,7 @@ export class PageComponent implements OnInit {
 
   @Input() elements: Element[] = []
 
-  public zoom = 0.75
+  public zoom$: Observable<number>
   public pageHeight: string = '841.89pt'
   public pageWidth: string = '595.28pt'
   public hoverFramePosition!: null | {height: string, width: string, transform: string}
@@ -20,8 +22,13 @@ export class PageComponent implements OnInit {
   public readonly maxWidth = 595.28
 
   private draggedElementEvent: dragEvent | null = null
+  private hoverElement!: Element | null
+  private selectedElement!: Element | null
 
-  constructor() {
+  constructor(
+    private store: Store<{ zoom: number }>
+  ) {
+    this.zoom$ = store.select('zoom')
     this.pageHeight = (this.maxHeight) + 'pt'
     this.pageWidth = (this.maxWidth) + 'pt'
   }
@@ -29,13 +36,13 @@ export class PageComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onPageMouseMove(e: any) {
+  async onPageMouseMove(e: any) {
     if (!this.draggedElementEvent) {
       return
     }
-
-    let newDx = (e.pageX * 0.75 / this.zoom) - this.draggedElementEvent.startX
-    let newDy = (e.pageY * 0.75 / this.zoom) - this.draggedElementEvent.startY
+    const zoom = await firstValueFrom(this.zoom$)
+    let newDx = (e.pageX * 0.75 / zoom) - this.draggedElementEvent.startX
+    let newDy = (e.pageY * 0.75 / zoom) - this.draggedElementEvent.startY
 
     if (newDx > this.maxWidth) {
       newDx = this.maxWidth
@@ -55,6 +62,14 @@ export class PageComponent implements OnInit {
     }
   }
 
+  onPageClick(e: any) {
+    if (this.hoverFramePosition) {
+      this.selectedElement = this.hoverElement
+      return
+    }
+    this.selectedElement = null
+  }
+
   onDragEvent(e: dragEvent) {
     if (!e.dragEnabled) {
       this.draggedElementEvent = null
@@ -66,8 +81,10 @@ export class PageComponent implements OnInit {
   onHoverElement(e: hoverEvent) {
     if (!e.hover) {
       this.hoverFramePosition = null
+      this.hoverElement = null
       return
     }
+    this.hoverElement = e.element
     this.hoverFramePosition = {
       width: e.elementRef.nativeElement.offsetWidth + 'px',
       height: e.elementRef.nativeElement.offsetHeight + 'px',

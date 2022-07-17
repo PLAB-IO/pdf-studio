@@ -1,5 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core'
 import {Element} from "../shared/element-model";
+import {Store} from "@ngrx/store";
+import {firstValueFrom, Observable} from "rxjs";
 
 export type dragEvent = {
   nativeElement: ElementRef
@@ -18,13 +20,17 @@ export type hoverEvent = {
 @Component({ template: '' })
 export abstract class AbstractElementComponent implements OnInit{
   @Input() element!: Element
-  @Input() zoom = 1
   @Output() dragEvent: EventEmitter<dragEvent> = new EventEmitter<dragEvent>()
   @Output() hoverEvent: EventEmitter<hoverEvent> = new EventEmitter<hoverEvent>()
 
+  public zoom$: Observable<number>
   private dragEnabled = false
 
-  constructor(protected el: ElementRef) {
+  protected constructor(
+    protected el: ElementRef,
+    protected store: Store<{ zoom: number }>
+  ) {
+    this.zoom$ = store.select('zoom')
     this.el.nativeElement.style.position = 'absolute'
     this.el.nativeElement.style.display = 'inline-block'
     this.el.nativeElement.style.padding = '1px'
@@ -56,14 +62,16 @@ export abstract class AbstractElementComponent implements OnInit{
   }
 
   // Start the drag position
-  private onMouseDown(e: { pageX: number, pageY: number }) {
+  private async onMouseDown(e: { pageX: number, pageY: number }) {
+    const zoom = await firstValueFrom(this.zoom$)
+
     this.dragEnabled = true
     this.dragEvent.emit({
       nativeElement: this.el,
       element: this.element,
       dragEnabled: true,
-      startX: (e.pageX * 0.75 / this.zoom) - this.element.x,
-      startY: (e.pageY * 0.75 / this.zoom) - this.element.y,
+      startX: (e.pageX * 0.75 / zoom) - this.element.x,
+      startY: (e.pageY * 0.75 / zoom) - this.element.y,
     })
   }
 

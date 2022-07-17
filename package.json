@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
     "@angular/service-worker": "~13.3.0",
+    "@ngrx/store": "^14.0.2",
     "pixi.js": "^6.3.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
