@@ -1,6 +1,6 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
-import {AbstractElementComponent} from "../abstract-element.component";
-import {Store} from "@ngrx/store";
+import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core'
+import {AbstractElementComponent} from "../abstract-element.component"
+import {EditorStore} from "../../shared/store/editor.store"
 
 export type TextOptions = {
   fontFamily?: string
@@ -19,8 +19,8 @@ export class TextElementComponent extends AbstractElementComponent implements On
   @Input() options!: TextOptions
   private readonly defaultFontSize = 12
 
-  constructor(el: ElementRef, store: Store<{ zoom: number }>) {
-    super(el, store)
+  constructor(el: ElementRef, editorStore: EditorStore) {
+    super(el, editorStore)
   }
 
   ngAfterViewInit(): void {

@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core'
-import {Element} from "../shared/element-model";
-import {Store} from "@ngrx/store";
-import {firstValueFrom, Observable} from "rxjs";
+import {Element} from "../shared/element-model"
+import {firstValueFrom, Observable} from "rxjs"
+import {EditorStore} from "../shared/store/editor.store"
 
 export type dragEvent = {
   nativeElement: ElementRef
@@ -23,14 +23,13 @@ export abstract class AbstractElementComponent implements OnInit{
   @Output() dragEvent: EventEmitter<dragEvent> = new EventEmitter<dragEvent>()
   @Output() hoverEvent: EventEmitter<hoverEvent> = new EventEmitter<hoverEvent>()
 
-  public zoom$: Observable<number>
+  public zoom$: Observable<number> = this.editorStore.zoom$
   private dragEnabled = false
 
   protected constructor(
     protected el: ElementRef,
-    protected store: Store<{ zoom: number }>
+    private readonly editorStore: EditorStore,
   ) {
-    this.zoom$ = store.select('zoom')
     this.el.nativeElement.style.position = 'absolute'
     this.el.nativeElement.style.display = 'inline-block'
     this.el.nativeElement.style.padding = '1px'

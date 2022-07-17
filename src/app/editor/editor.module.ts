@@ -5,8 +5,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop'
 import { TextElementComponent } from './elements/text-element/text-element.component'
 import { PageComponent } from './page/page.component'
 import { PanelOptionsComponent } from './panel-options/panel-options.component'
-import { StoreModule } from "@ngrx/store"
-import { zoomReducer } from "./shared/store/editor.reducer";
+import { EditorStore } from "./shared/store/editor.store"
 
 @NgModule({
   declarations: [
@@ -18,10 +17,12 @@ import { zoomReducer } from "./shared/store/editor.reducer";
   imports: [
     CommonModule,
     DragDropModule,
-    StoreModule.forRoot({editor: zoomReducer}, {})
   ],
   exports: [
     EditorComponent,
+  ],
+  providers: [
+    EditorStore,
   ]
 })
 export class EditorModule { }

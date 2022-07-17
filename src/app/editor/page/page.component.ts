@@ -1,8 +1,8 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core'
+import {Component, Input, OnInit} from '@angular/core'
 import {Element} from "../shared/element-model"
 import {dragEvent, hoverEvent} from "../elements/abstract-element.component"
-import {Store} from "@ngrx/store"
-import {firstValueFrom, Observable, Subscription} from "rxjs"
+import {firstValueFrom, Observable} from "rxjs"
+import {EditorStore} from "../shared/store/editor.store"
 
 @Component({
   selector: 'app-page',
@@ -13,7 +13,7 @@ export class PageComponent implements OnInit {
 
   @Input() elements: Element[] = []
 
-  public zoom$: Observable<number>
+  public zoom$: Observable<number> = this.editorStore.zoom$
   public pageHeight: string = '841.89pt'
   public pageWidth: string = '595.28pt'
   public hoverFramePosition!: null | {height: string, width: string, transform: string}
@@ -26,9 +26,8 @@ export class PageComponent implements OnInit {
   private selectedElement!: Element | null
 
   constructor(
-    private store: Store<{ zoom: number }>
+    private readonly editorStore: EditorStore,
   ) {
-    this.zoom$ = store.select('zoom')
     this.pageHeight = (this.maxHeight) + 'pt'
     this.pageWidth = (this.maxWidth) + 'pt'
   }
