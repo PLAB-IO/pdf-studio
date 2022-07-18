@@ -63,6 +63,9 @@ export class PageComponent implements OnInit {
 
   onPageClick(e: any) {
     if (this.hoverFramePosition) {
+      if (this.selectedElement) {
+        // TODO edit mode
+      }
       this.selectedElement = this.hoverElement
       return
     }

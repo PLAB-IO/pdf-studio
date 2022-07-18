@@ -1,5 +1,5 @@
 import {Component, HostListener, OnInit} from '@angular/core'
-import {Element} from '../shared/element-model'
+import {Element, ElementType} from '../shared/element-model'
 import {Observable} from "rxjs"
 import {EditorStore} from "../shared/store/editor.store"
 
@@ -20,23 +20,27 @@ export class EditorComponent implements OnInit {
   ngOnInit(): void {
     this.elements.push({
       id: 'abc',
-      name: 'text',
+      type: ElementType.text,
       x: 100,
       y: 10,
       value: '',
       opts: {
         fontSize: 32,
         bold: true,
-      }
+      },
+      editable: false,
+      pageNo: 1,
     })
 
     this.elements.push({
       id: 'xwed',
-      name: 'text',
+      type: ElementType.text,
       x: 200,
       y: 50,
       value: 'Second Title',
-      opts: {}
+      opts: {},
+      editable: false,
+      pageNo: 1,
     })
   }
 

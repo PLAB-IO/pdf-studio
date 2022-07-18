@@ -1,16 +1,18 @@
 import {ComponentStore} from "@ngrx/component-store"
 import {Injectable} from "@angular/core"
 import {Observable} from "rxjs"
+import {Element} from "../element-model"
 
 export interface EditorState {
-  zoom: number
+  zoom: number,
+  elements: Element[],
 }
 
 @Injectable()
 export class EditorStore extends ComponentStore<EditorState> {
 
   constructor() {
-    super({zoom: 0.75});
+    super({zoom: 0.75, elements: []});
   }
 
   readonly zoom$: Observable<number> = this.select(state => state.zoom);

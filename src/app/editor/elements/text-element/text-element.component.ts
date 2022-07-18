@@ -17,6 +17,7 @@ export type TextOptions = {
 })
 export class TextElementComponent extends AbstractElementComponent implements OnInit, AfterViewInit {
   @Input() options!: TextOptions
+  public editable = false
   private readonly defaultFontSize = 12
 
   constructor(el: ElementRef, editorStore: EditorStore) {
