@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core'
-import {Element} from "../shared/element-model"
+import {Element} from "../shared/model/element.model"
 import {dragEvent, hoverEvent} from "../elements/abstract-element.component"
-import {firstValueFrom, Observable} from "rxjs"
+import {firstValueFrom, map, Observable} from "rxjs"
 import {EditorStore} from "../shared/store/editor.store"
 
 @Component({
@@ -11,8 +11,9 @@ import {EditorStore} from "../shared/store/editor.store"
 })
 export class PageComponent implements OnInit {
 
-  @Input() elements: Element[] = []
+  @Input() pageNo!: number
 
+  public elements$!: Observable<Element[]>
   public zoom$: Observable<number> = this.editorStore.zoom$
   public pageHeight: string = '841.89pt'
   public pageWidth: string = '595.28pt'
@@ -33,6 +34,10 @@ export class PageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.pageNo)
+    this.elements$ = this.editorStore.elements$.pipe(
+      map(elements => elements.filter(el => el.pageNo === this.pageNo))
+    )
   }
 
   async onPageMouseMove(e: any) {

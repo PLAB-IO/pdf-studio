@@ -1,5 +1,5 @@
 import {Component, HostListener, OnInit} from '@angular/core'
-import {Element, ElementType} from '../shared/element-model'
+import {ElementType} from '../shared/model/element.model'
 import {Observable} from "rxjs"
 import {EditorStore} from "../shared/store/editor.store"
 
@@ -10,16 +10,16 @@ import {EditorStore} from "../shared/store/editor.store"
 })
 export class EditorComponent implements OnInit {
 
-  public elements: Element[] = []
   public zoom$: Observable<number> = this.editorStore.zoom$
+  public pageNbr$: Observable<number> = this.editorStore.pagesNbr$
 
   constructor(
     private readonly editorStore: EditorStore,
   ) {}
 
   ngOnInit(): void {
-    this.elements.push({
-      id: 'abc',
+    this.editorStore.putElement({
+      id: '001',
       type: ElementType.text,
       x: 100,
       y: 10,
@@ -32,8 +32,8 @@ export class EditorComponent implements OnInit {
       pageNo: 1,
     })
 
-    this.elements.push({
-      id: 'xwed',
+    this.editorStore.putElement({
+      id: '002',
       type: ElementType.text,
       x: 200,
       y: 50,

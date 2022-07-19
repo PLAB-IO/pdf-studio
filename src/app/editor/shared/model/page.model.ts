@@ -1,21 +1,3 @@
-import {TextOptions} from "../elements/text-element/text-element.component";
-
-export enum ElementType {
-  'text' = 'text',
-  'image' = 'image',
-}
-
-export type Element = {
-  id: string
-  type: ElementType
-  x: number
-  y: number
-  value: string
-  opts: TextOptions
-  pageNo: number
-  editable: boolean
-}
-
 // A0 (2383.94 x 3370.39)
 // A1 (1683.78 x 2383.94)
 // A2 (1190.55 x 1683.78)

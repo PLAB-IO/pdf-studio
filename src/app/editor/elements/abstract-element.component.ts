@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core'
-import {Element} from "../shared/element-model"
+import {Element} from "../shared/model/element.model"
 import {firstValueFrom, Observable} from "rxjs"
 import {EditorStore} from "../shared/store/editor.store"
 
