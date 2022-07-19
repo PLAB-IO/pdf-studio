@@ -1,4 +1,5 @@
 <button (click)="zoom(true)">Zoom IN</button>
 <button (click)="zoom(false)">Zoom OUT</button>
 
-<app-page *ngFor="let pageNo; pageNo < pageNbr$ | async; pageNo++"></app-page>
+<app-page *ngFor="let pageNo of pagesNo"
+          [pageNo]="pageNo"></app-page>

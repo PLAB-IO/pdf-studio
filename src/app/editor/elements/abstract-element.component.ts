@@ -18,12 +18,14 @@ export type hoverEvent = {
 }
 
 @Component({ template: '' })
-export abstract class AbstractElementComponent implements OnInit{
-  @Input() element!: Element
+export abstract class AbstractElementComponent implements OnInit {
+  @Input() elementId!: string
   @Output() dragEvent: EventEmitter<dragEvent> = new EventEmitter<dragEvent>()
   @Output() hoverEvent: EventEmitter<hoverEvent> = new EventEmitter<hoverEvent>()
 
   public zoom$: Observable<number> = this.editorStore.zoom$
+  public element$!: Observable<Element>
+  public element!: Element
   private dragEnabled = false
 
   protected constructor(
@@ -41,7 +43,13 @@ export abstract class AbstractElementComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.el.nativeElement.style.transform = 'translate(' + this.element.x + 'pt, ' + this.element.y + 'pt)'
+    this.element$ = this.editorStore.getElement(this.elementId)
+    this.element$.subscribe(element => {
+      if (element) {
+        this.element = element
+        this.el.nativeElement.style.transform = 'translate(' + this.element.x + 'pt, ' + this.element.y + 'pt)'
+      }
+    })
   }
 
   @HostListener('mouseenter') onMouseEnter() {

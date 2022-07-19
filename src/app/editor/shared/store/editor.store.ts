@@ -1,6 +1,6 @@
 import {ComponentStore} from "@ngrx/component-store"
 import {Injectable} from "@angular/core"
-import {Observable, switchMap} from "rxjs"
+import {catchError, filter, map, Observable, switchMap, take, tap} from "rxjs"
 import {Element} from "../model/element.model"
 
 export interface EditorState {
@@ -42,8 +42,36 @@ export class EditorStore extends ComponentStore<EditorState> {
     ],
   }))
 
-  getElement(elementId: string): Observable<Element|undefined> {
-    return this.select((state) => state.elements.find(el => el.id === elementId))
+  readonly patchElement = this.updater((
+    state,
+    patchObj: {id: string, key: string, value: any}
+  ) => {
+    const element = state.elements.find(el => el.id === patchObj.id)
+    if (!element) {
+      throw Error(`element id ${patchObj.id} not found to be patched`)
+    }
+    const patchElement = {
+      ...element,
+      [patchObj.key]: patchObj.value
+    }
+
+    return {
+    ...state,
+      elements: [
+      ...state.elements.filter((el: Element) => el.id !== patchObj.id),
+      ...[patchElement]
+    ],
+    }
+  })
+
+  getElement(elementId: string): Observable<Element> {
+    return this.select((state) => {
+      const element = state.elements.find(el => el.id === elementId)
+      if (!element) {
+        throw Error(`element id ${elementId} not found`)
+      }
+      return element
+    })
   }
 
   // readonly getElement = this.effect((elementId$: Observable<string>) => {

@@ -11,10 +11,9 @@
      (mousemove)="onPageMouseMove($event)"
      (click)="onPageClick($event)">
 
-  <ng-container *ngFor="let el of elements">
+  <ng-container *ngFor="let el of (elements$ | async)">
     <app-text-element *ngIf="'text' === el.type"
-                      [element]="el"
-                      [options]="el.opts"
+                      [elementId]="el.id"
                       (hoverEvent)="onHoverElement($event)"
                       (dragEvent)="onDragEvent($event)"></app-text-element>
   </ng-container>

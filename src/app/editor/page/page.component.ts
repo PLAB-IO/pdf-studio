@@ -34,7 +34,6 @@ export class PageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.pageNo)
     this.elements$ = this.editorStore.elements$.pipe(
       map(elements => elements.filter(el => el.pageNo === this.pageNo))
     )
@@ -69,10 +68,21 @@ export class PageComponent implements OnInit {
   onPageClick(e: any) {
     if (this.hoverFramePosition) {
       if (this.selectedElement) {
-        // TODO edit mode
+        this.editorStore.patchElement({
+          id: this.selectedElement.id,
+          key: 'editable',
+          value: true,
+        })
       }
       this.selectedElement = this.hoverElement
       return
+    }
+    if (this.selectedElement) {
+      this.editorStore.patchElement({
+        id: this.selectedElement.id,
+        key: 'editable',
+        value: false,
+      })
     }
     this.selectedElement = null
   }

@@ -12,12 +12,20 @@ export class EditorComponent implements OnInit {
 
   public zoom$: Observable<number> = this.editorStore.zoom$
   public pageNbr$: Observable<number> = this.editorStore.pagesNbr$
+  public pagesNo: number[] = []
 
   constructor(
     private readonly editorStore: EditorStore,
   ) {}
 
   ngOnInit(): void {
+    this.pageNbr$.subscribe((pageNbr: number) => {
+      const pagesNo = []
+      for (let p = 1; p <= pageNbr; p++) {
+        pagesNo.push(p)
+      }
+      this.pagesNo = pagesNo
+    })
     this.editorStore.putElement({
       id: '001',
       type: ElementType.text,

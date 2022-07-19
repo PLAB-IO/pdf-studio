@@ -16,8 +16,6 @@ export type TextOptions = {
   styleUrls: ['./text-element.component.scss']
 })
 export class TextElementComponent extends AbstractElementComponent implements OnInit, AfterViewInit {
-  @Input() options!: TextOptions
-  public editable = false
   private readonly defaultFontSize = 12
 
   constructor(el: ElementRef, editorStore: EditorStore) {
@@ -25,19 +23,23 @@ export class TextElementComponent extends AbstractElementComponent implements On
   }
 
   ngAfterViewInit(): void {
-    this.el.nativeElement.style.fontSize = (this.options?.fontSize || this.defaultFontSize) + 'pt'
-    this.el.nativeElement.style.lineHeight = (this.options?.fontSize || this.defaultFontSize) + 'pt'
-    if (this.options?.bold) {
-      this.el.nativeElement.style.fontWeight = 'bold';
-    }
-    if (this.options?.fontFamily) {
-      this.el.nativeElement.style.fontFamily = this.options.fontFamily;
-    }
-    if (this.options?.color) {
-      this.el.nativeElement.style.color = this.options.color;
-    }
-    if (this.options?.opacity) {
-      this.el.nativeElement.style.opacity = this.options.opacity;
-    }
+    this.element$.subscribe(element => {
+      const options = element?.opts || {}
+
+      this.el.nativeElement.style.fontSize = (options?.fontSize || this.defaultFontSize) + 'pt'
+      this.el.nativeElement.style.lineHeight = (options?.fontSize || this.defaultFontSize) + 'pt'
+      if (options?.bold) {
+        this.el.nativeElement.style.fontWeight = 'bold'
+      }
+      if (options?.fontFamily) {
+        this.el.nativeElement.style.fontFamily = options.fontFamily
+      }
+      if (options?.color) {
+        this.el.nativeElement.style.color = options.color
+      }
+      if (options?.opacity) {
+        this.el.nativeElement.style.opacity = options.opacity
+      }
+    })
   }
 }
