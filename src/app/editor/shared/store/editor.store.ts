@@ -1,12 +1,18 @@
 import {ComponentStore} from "@ngrx/component-store"
 import {Injectable} from "@angular/core"
-import {catchError, filter, map, Observable, switchMap, take, tap} from "rxjs"
+import {Observable} from "rxjs"
 import {Element} from "../model/element.model"
 
+export interface DocTemplate {
+  name: string
+  updatedAt: string
+}
+
 export interface EditorState {
-  zoom: number,
-  elements: Element[],
+  zoom: number
+  elements: Element[]
   pagesNbr: number
+  template: DocTemplate
 }
 
 @Injectable()
@@ -17,12 +23,17 @@ export class EditorStore extends ComponentStore<EditorState> {
       zoom: 0.75,
       elements: [],
       pagesNbr: 1,
-    });
+      template: {
+        name: 'Certificate NAP',
+        updatedAt: '2020-07-10 15:00:00.000',
+      }
+    })
   }
 
   readonly zoom$: Observable<number> = this.select(state => state.zoom)
   readonly pagesNbr$: Observable<number> = this.select(state => state.pagesNbr)
   readonly elements$: Observable<Element[]> = this.select(state => state.elements);
+  readonly template$: Observable<DocTemplate> = this.select(state => state.template);
 
   readonly zoomIn = this.updater((state) => ({
     ...state,

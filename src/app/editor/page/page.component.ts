@@ -4,6 +4,19 @@ import {dragEvent, hoverEvent} from "../elements/abstract-element.component"
 import {firstValueFrom, map, Observable} from "rxjs"
 import {EditorStore} from "../shared/store/editor.store"
 
+// Mouse enter element -> dispatch hover element position information
+// Mouse leave element -> dispatch clear hover element
+
+// Mouse click element -> dispatch select element
+//                            -> subscriber => override selected element
+//                     -> if already selected -> enable edit mode
+
+// Mouse ctrl + click  -> dispatch select group element
+//                            -> subscriber => create group if empty with selected element
+//                                          => add dispatched group element to the group
+
+// Mouse click page -> dispatch reset selection
+//                            -> subscriber => clear (selected element and group elements)
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
@@ -58,7 +71,7 @@ export class PageComponent implements OnInit {
     this.draggedElementEvent.element.x = newDx
     this.draggedElementEvent.element.y = newDy
 
-    this.hoverFramePosition = await this.computeFrameBoxPosition(
+    this.hoverFramePosition = await PageComponent.computeFrameBoxPosition(
       this.draggedElementEvent.nativeElement.nativeElement.offsetWidth,
       this.draggedElementEvent.nativeElement.nativeElement.offsetHeight,
       this.draggedElementEvent.element,
@@ -66,25 +79,12 @@ export class PageComponent implements OnInit {
   }
 
   onPageClick(e: any) {
-    if (this.hoverFramePosition) {
-      if (this.selectedElement) {
-        this.editorStore.patchElement({
-          id: this.selectedElement.id,
-          key: 'editable',
-          value: true,
-        })
-      }
-      this.selectedElement = this.hoverElement
-      return
-    }
-    if (this.selectedElement) {
-      this.editorStore.patchElement({
-        id: this.selectedElement.id,
-        key: 'editable',
-        value: false,
-      })
-    }
-    this.selectedElement = null
+    console.log('click on page')
+    // this.editorStore.patchElement({
+    //   id: '001',
+    //   key: 'editable',
+    //   value: false,
+    // })
   }
 
   onDragEvent(e: dragEvent) {
@@ -102,19 +102,18 @@ export class PageComponent implements OnInit {
       return
     }
     this.hoverElement = e.element
-    this.hoverFramePosition = await this.computeFrameBoxPosition(
+    this.hoverFramePosition = await PageComponent.computeFrameBoxPosition(
       e.elementRef.nativeElement.offsetWidth,
       e.elementRef.nativeElement.offsetHeight,
       e.element
     )
   }
 
-  private async computeFrameBoxPosition(offsetWidth: number, offsetHeight: number, element: Element) {
-    const zoom = await firstValueFrom(this.zoom$)
+  private static async computeFrameBoxPosition(offsetWidth: number, offsetHeight: number, element: Element) {
     return {
-      width: Math.round((offsetWidth + 4) * zoom) + 'px',
-      height: Math.round((offsetHeight + 2) * zoom) + 'px',
-      transform: `translate(${element.x * zoom}pt, ${element.y * zoom}pt)`,
+      width: Math.round(offsetWidth + 4) + 'px',
+      height: Math.round(offsetHeight + 2) + 'px',
+      transform: `translate(${element.x}pt, ${element.y}pt)`,
     }
   }
 

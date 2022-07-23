@@ -6,6 +6,7 @@ import { TextElementComponent } from './elements/text-element/text-element.compo
 import { PageComponent } from './page/page.component'
 import { PanelOptionsComponent } from './panel-options/panel-options.component'
 import { EditorStore } from "./shared/store/editor.store"
+import {SharedModule} from "../shared/shared.module";
 
 @NgModule({
   declarations: [
@@ -14,10 +15,11 @@ import { EditorStore } from "./shared/store/editor.store"
     PageComponent,
     PanelOptionsComponent,
   ],
-  imports: [
-    CommonModule,
-    DragDropModule,
-  ],
+    imports: [
+        CommonModule,
+        DragDropModule,
+        SharedModule,
+    ],
   exports: [
     EditorComponent,
   ],

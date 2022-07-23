@@ -1,16 +1,16 @@
-<div class="elementFrame" *ngIf="!!hoverFramePosition"
-     [style.width]="hoverFramePosition.width"
-     [style.height]="hoverFramePosition.height"
-     [style.transform]="hoverFramePosition.transform">
-  <div class="frame"></div>
-</div>
-<div class="page"
+<div class="page bg-white border-2 border-studr-primary rounded-xl shadow-md"
      [style.height]="pageHeight"
      [style.width]="pageWidth"
      [style.transform]="'scale(' + (zoom$ | async) + ')'"
      (mousemove)="onPageMouseMove($event)"
-     (click)="onPageClick($event)">
+     (mouseup)="onPageClick($event)">
 
+  <div class="elementFrame" *ngIf="!!hoverFramePosition"
+       [style.width]="hoverFramePosition?.width"
+       [style.height]="hoverFramePosition?.height"
+       [style.transform]="hoverFramePosition?.transform">
+    <div class="frame border-2 border-studr-primary"></div>
+  </div>
   <ng-container *ngFor="let el of (elements$ | async)">
     <app-text-element *ngIf="'text' === el.type"
                       [elementId]="el.id"

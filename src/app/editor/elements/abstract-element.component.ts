@@ -40,6 +40,7 @@ export abstract class AbstractElementComponent implements OnInit {
     this.el.nativeElement.style['touch-action'] = 'pan-x pan-y pinch-zoom'
 
     this.el.nativeElement.addEventListener('mousedown', this.onMouseDown.bind(this))
+    this.el.nativeElement.addEventListener('mouseup', this.onMouseUp.bind(this))
   }
 
   ngOnInit(): void {
@@ -69,8 +70,13 @@ export abstract class AbstractElementComponent implements OnInit {
   }
 
   // Start the drag position
-  private async onMouseDown(e: { pageX: number, pageY: number }) {
+  private async onMouseDown(e: { pageX: number, pageY: number, stopPropagation: Function }) {
     const zoom = await firstValueFrom(this.zoom$)
+
+    if (this.element.editable) {
+      e.stopPropagation()
+      return
+    }
 
     this.dragEnabled = true
     this.dragEvent.emit({
@@ -82,7 +88,18 @@ export abstract class AbstractElementComponent implements OnInit {
     })
   }
 
-  @HostListener('mouseup') onMouseUp() {
+  private async onMouseUp(e: {stopPropagation: Function }) {
+    console.log('mouseup element', this.elementId)
+    e.stopPropagation()
+
+    if (!this.element.editable) {
+      this.editorStore.patchElement({
+        id: this.elementId,
+        key: 'editable',
+        value: true,
+      })
+    }
+
     this.dragEnabled = false
     this.dragEvent.emit({
       element: this.element,

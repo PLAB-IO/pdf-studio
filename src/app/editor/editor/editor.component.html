@@ -1,5 +1,23 @@
-<button (click)="zoom(true)">Zoom IN</button>
-<button (click)="zoom(false)">Zoom OUT</button>
+<div>
+  <app-ds-atom-title [title]="template?.name"
+                     [subTitle]="template?.updatedAt"></app-ds-atom-title>
+</div>
 
-<app-page *ngFor="let pageNo of pagesNo"
-          [pageNo]="pageNo"></app-page>
+<section class="pl-20 pt-10">
+  <app-page *ngFor="let pageNo of pagesNo"
+            [pageNo]="pageNo"></app-page>
+</section>
+
+<section class="flex items-center fixed px-3 bg-studr-accent bottom-2 right-2 rounded-md p-1.5">
+  <button (click)="zoom(true)">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+    </svg>
+  </button>
+  <span class="px-3">{{ ((zoom$ | async) || 1) * 100 }} %</span>
+  <button (click)="zoom(false)">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+    </svg>
+  </button>
+</section>

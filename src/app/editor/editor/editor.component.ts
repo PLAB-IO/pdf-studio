@@ -1,7 +1,7 @@
 import {Component, HostListener, OnInit} from '@angular/core'
 import {ElementType} from '../shared/model/element.model'
 import {Observable} from "rxjs"
-import {EditorStore} from "../shared/store/editor.store"
+import {DocTemplate, EditorStore} from "../shared/store/editor.store"
 
 @Component({
   selector: 'app-editor',
@@ -13,12 +13,14 @@ export class EditorComponent implements OnInit {
   public zoom$: Observable<number> = this.editorStore.zoom$
   public pageNbr$: Observable<number> = this.editorStore.pagesNbr$
   public pagesNo: number[] = []
+  public template!: DocTemplate
 
   constructor(
     private readonly editorStore: EditorStore,
   ) {}
 
   ngOnInit(): void {
+    this.editorStore.template$.subscribe(tpl => this.template = tpl)
     this.pageNbr$.subscribe((pageNbr: number) => {
       const pagesNo = []
       for (let p = 1; p <= pageNbr; p++) {
