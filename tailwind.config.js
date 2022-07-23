@@ -40,7 +40,7 @@ module.exports = {
       colors: {
         'stdur-bg': '#F7F8FC',
         'studr-primary': '#8AE6E6',
-        'studr-accent': '#EBFBFB',
+        'studr-accent': '#e1fcfc',
         white: colors.white,
         black: colors.black,
         gray: colors.gray,
