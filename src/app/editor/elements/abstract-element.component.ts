@@ -11,17 +11,10 @@ export type dragEvent = {
   startY: number
 }
 
-export type hoverEvent = {
-  element: Element
-  elementRef: ElementRef
-  hover: boolean
-}
-
 @Component({ template: '' })
 export abstract class AbstractElementComponent implements OnInit {
   @Input() elementId!: string
   @Output() dragEvent: EventEmitter<dragEvent> = new EventEmitter<dragEvent>()
-  @Output() hoverEvent: EventEmitter<hoverEvent> = new EventEmitter<hoverEvent>()
 
   public zoom$: Observable<number> = this.editorStore.zoom$
   public element$!: Observable<Element>
@@ -30,7 +23,7 @@ export abstract class AbstractElementComponent implements OnInit {
 
   protected constructor(
     protected el: ElementRef,
-    private readonly editorStore: EditorStore,
+    protected readonly editorStore: EditorStore,
   ) {
     this.el.nativeElement.style.position = 'absolute'
     this.el.nativeElement.style.display = 'inline-block'
@@ -54,18 +47,26 @@ export abstract class AbstractElementComponent implements OnInit {
   }
 
   @HostListener('mouseenter') onMouseEnter() {
-    this.hoverEvent.emit({
-      element: this.element,
-      elementRef: this.el,
-      hover: true,
+    this.editorStore.pageEvent$.emit({
+      event: 'HOVER_ENTER',
+      elementId: this.elementId,
+      pageNo: this.element.pageNo,
+      offsetWidth: this.el.nativeElement.offsetWidth,
+      offsetHeight: this.el.nativeElement.offsetHeight,
+      x: this.element.x,
+      y: this.element.y,
     })
   }
 
   @HostListener('mouseleave') onMouseLeave() {
-    this.hoverEvent.emit({
-      element: this.element,
-      elementRef: this.el,
-      hover: false,
+    this.editorStore.pageEvent$.emit({
+      event: 'HOVER_LEAVE',
+      elementId: this.elementId,
+      pageNo: this.element.pageNo,
+      offsetWidth: this.el.nativeElement.offsetWidth,
+      offsetHeight: this.el.nativeElement.offsetHeight,
+      x: this.element.x,
+      y: this.element.y,
     })
   }
 
@@ -89,7 +90,6 @@ export abstract class AbstractElementComponent implements OnInit {
   }
 
   private async onMouseUp(e: {stopPropagation: Function }) {
-    console.log('mouseup element', this.elementId)
     e.stopPropagation()
 
     if (!this.element.editable) {

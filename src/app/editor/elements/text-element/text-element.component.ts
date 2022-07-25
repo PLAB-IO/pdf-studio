@@ -42,4 +42,16 @@ export class TextElementComponent extends AbstractElementComponent implements On
       }
     })
   }
+
+  onInput(event: Event) {
+    //console.log('onInput', event)
+  }
+
+  onBlur(event: any) {
+    this.editorStore.patchElement({
+      id: this.elementId,
+      key: 'value',
+      value: event.target.innerText,
+    })
+  }
 }

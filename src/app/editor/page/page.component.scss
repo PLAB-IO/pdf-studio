@@ -2,11 +2,12 @@
 
 :host {
   user-select: none;
+  margin-right: 2em;
+  margin-bottom: 2em;
 
   .page {
     position: relative;
     overflow: hidden;
-    transform: scale(1);
     transform-origin: 0 0;
   }
 

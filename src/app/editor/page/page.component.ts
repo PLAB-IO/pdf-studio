@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core'
+import {Component, ElementRef, Input, OnInit} from '@angular/core'
 import {Element} from "../shared/model/element.model"
-import {dragEvent, hoverEvent} from "../elements/abstract-element.component"
-import {firstValueFrom, map, Observable} from "rxjs"
-import {EditorStore} from "../shared/store/editor.store"
+import {dragEvent} from "../elements/abstract-element.component"
+import {filter, firstValueFrom, map, Observable} from "rxjs"
+import {EditorStore, PageEvent} from "../shared/store/editor.store"
 
 // Mouse enter element -> dispatch hover element position information
 // Mouse leave element -> dispatch clear hover element
@@ -17,6 +17,7 @@ import {EditorStore} from "../shared/store/editor.store"
 
 // Mouse click page -> dispatch reset selection
 //                            -> subscriber => clear (selected element and group elements)
+//                                          => clear editable to false
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
@@ -36,11 +37,10 @@ export class PageComponent implements OnInit {
   public readonly maxWidth = 595.28
 
   private draggedElementEvent: dragEvent | null = null
-  private hoverElement!: Element | null
-  private selectedElement!: Element | null
 
   constructor(
     private readonly editorStore: EditorStore,
+    protected el: ElementRef,
   ) {
     this.pageHeight = (this.maxHeight) + 'pt'
     this.pageWidth = (this.maxWidth) + 'pt'
@@ -50,6 +50,23 @@ export class PageComponent implements OnInit {
     this.elements$ = this.editorStore.elements$.pipe(
       map(elements => elements.filter(el => el.pageNo === this.pageNo))
     )
+    this.editorStore.pageEvent$
+      .pipe(
+        filter(pageEvent => pageEvent.pageNo === this.pageNo)
+      )
+      .subscribe(async pageEvent => {
+        if (pageEvent.event === 'HOVER_ENTER') {
+          await this.hoverElement(pageEvent, true)
+        }
+        if (pageEvent.event === 'HOVER_LEAVE') {
+          await this.hoverElement(pageEvent, false)
+        }
+      })
+
+    this.zoom$.subscribe(zoom => {
+      this.el.nativeElement.style.height = (this.maxHeight * zoom) + 'pt'
+      this.el.nativeElement.style.width = (this.maxWidth * zoom) + 'pt'
+    })
   }
 
   async onPageMouseMove(e: any) {
@@ -74,17 +91,13 @@ export class PageComponent implements OnInit {
     this.hoverFramePosition = await PageComponent.computeFrameBoxPosition(
       this.draggedElementEvent.nativeElement.nativeElement.offsetWidth,
       this.draggedElementEvent.nativeElement.nativeElement.offsetHeight,
-      this.draggedElementEvent.element,
+      this.draggedElementEvent.element.x,
+      this.draggedElementEvent.element.y,
     )
   }
 
   onPageClick(e: any) {
-    console.log('click on page')
-    // this.editorStore.patchElement({
-    //   id: '001',
-    //   key: 'editable',
-    //   value: false,
-    // })
+    this.editorStore.clearEditableElement()
   }
 
   onDragEvent(e: dragEvent) {
@@ -95,25 +108,24 @@ export class PageComponent implements OnInit {
     this.draggedElementEvent = e
   }
 
-  async onHoverElement(e: hoverEvent) {
-    if (!e.hover) {
+  private async hoverElement(pageEvent: PageEvent, hover: boolean) {
+    if (!hover) {
       this.hoverFramePosition = null
-      this.hoverElement = null
       return
     }
-    this.hoverElement = e.element
     this.hoverFramePosition = await PageComponent.computeFrameBoxPosition(
-      e.elementRef.nativeElement.offsetWidth,
-      e.elementRef.nativeElement.offsetHeight,
-      e.element
+      pageEvent.offsetWidth,
+      pageEvent.offsetHeight,
+      pageEvent.x,
+      pageEvent.y,
     )
   }
 
-  private static async computeFrameBoxPosition(offsetWidth: number, offsetHeight: number, element: Element) {
+  private static async computeFrameBoxPosition(offsetWidth: number, offsetHeight: number, x: number, y: number) {
     return {
       width: Math.round(offsetWidth + 4) + 'px',
       height: Math.round(offsetHeight + 2) + 'px',
-      transform: `translate(${element.x}pt, ${element.y}pt)`,
+      transform: `translate(${x}pt, ${y}pt)`,
     }
   }
 

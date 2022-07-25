@@ -1,4 +1,4 @@
-<div class="page bg-white border-2 border-studr-primary rounded-xl shadow-md"
+<div class="page bg-white border-2 border-studr-primary rounded-xl shadow-md transition-transform"
      [style.height]="pageHeight"
      [style.width]="pageWidth"
      [style.transform]="'scale(' + (zoom$ | async) + ')'"
@@ -14,7 +14,6 @@
   <ng-container *ngFor="let el of (elements$ | async)">
     <app-text-element *ngIf="'text' === el.type"
                       [elementId]="el.id"
-                      (hoverEvent)="onHoverElement($event)"
                       (dragEvent)="onDragEvent($event)"></app-text-element>
   </ng-container>
 </div>

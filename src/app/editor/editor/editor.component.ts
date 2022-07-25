@@ -50,7 +50,7 @@ export class EditorComponent implements OnInit {
       value: 'Second Title',
       opts: {},
       editable: false,
-      pageNo: 1,
+      pageNo: 2,
     })
   }
 

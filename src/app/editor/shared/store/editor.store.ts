@@ -1,18 +1,28 @@
 import {ComponentStore} from "@ngrx/component-store"
-import {Injectable} from "@angular/core"
+import {EventEmitter, Injectable} from "@angular/core"
 import {Observable} from "rxjs"
 import {Element} from "../model/element.model"
 
-export interface DocTemplate {
+export type DocTemplate = {
   name: string
   updatedAt: string
 }
 
-export interface EditorState {
+export type EditorState = {
   zoom: number
   elements: Element[]
   pagesNbr: number
   template: DocTemplate
+}
+
+export type PageEvent = {
+  event: 'HOVER_ENTER' | 'HOVER_LEAVE' | 'SELECT_ELEMENT' | 'ADD_ELEMENT' | 'RESET_SELECT'
+  elementId: string
+  pageNo: number
+  offsetWidth: number
+  offsetHeight: number
+  x: number
+  y: number
 }
 
 @Injectable()
@@ -22,7 +32,7 @@ export class EditorStore extends ComponentStore<EditorState> {
     super({
       zoom: 0.75,
       elements: [],
-      pagesNbr: 1,
+      pagesNbr: 2,
       template: {
         name: 'Certificate NAP',
         updatedAt: '2020-07-10 15:00:00.000',
@@ -32,8 +42,9 @@ export class EditorStore extends ComponentStore<EditorState> {
 
   readonly zoom$: Observable<number> = this.select(state => state.zoom)
   readonly pagesNbr$: Observable<number> = this.select(state => state.pagesNbr)
-  readonly elements$: Observable<Element[]> = this.select(state => state.elements);
-  readonly template$: Observable<DocTemplate> = this.select(state => state.template);
+  readonly elements$: Observable<Element[]> = this.select(state => state.elements)
+  readonly template$: Observable<DocTemplate> = this.select(state => state.template)
+  readonly pageEvent$: EventEmitter<PageEvent> = new EventEmitter<PageEvent>()
 
   readonly zoomIn = this.updater((state) => ({
     ...state,
@@ -72,6 +83,18 @@ export class EditorStore extends ComponentStore<EditorState> {
       ...state.elements.filter((el: Element) => el.id !== patchObj.id),
       ...[patchElement]
     ],
+    }
+  })
+
+  readonly clearEditableElement = this.updater((state) => {
+    return {
+      ...state,
+      elements: [
+        ...state.elements.map((el: Element) => {
+          el.editable = false
+          return el
+        }),
+      ],
     }
   })
 
