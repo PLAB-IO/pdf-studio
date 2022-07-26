@@ -22,8 +22,6 @@
       "es2020",
       "dom"
     ],
-    // Add manually
-    "allowSyntheticDefaultImports": true, // add due to pixi build
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
