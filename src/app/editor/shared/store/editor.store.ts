@@ -11,13 +11,15 @@ export type DocTemplate = {
 export type EditorState = {
   zoom: number
   elements: Element[]
+  selectedElement: Element | undefined
   pagesNbr: number
   template: DocTemplate
 }
 
 export type PageEvent = {
-  event: 'HOVER_ENTER' | 'HOVER_LEAVE' | 'SELECT_ELEMENT' | 'ADD_ELEMENT' | 'RESET_SELECT'
+  event: 'HOVER_ENTER' | 'HOVER_LEAVE' | 'SELECTED'
   elementId: string
+  allPages: boolean
   pageNo: number
   offsetWidth: number
   offsetHeight: number
@@ -32,6 +34,7 @@ export class EditorStore extends ComponentStore<EditorState> {
     super({
       zoom: 0.75,
       elements: [],
+      selectedElement: undefined,
       pagesNbr: 2,
       template: {
         name: 'Certificate NAP',
@@ -44,6 +47,7 @@ export class EditorStore extends ComponentStore<EditorState> {
   readonly pagesNbr$: Observable<number> = this.select(state => state.pagesNbr)
   readonly elements$: Observable<Element[]> = this.select(state => state.elements)
   readonly template$: Observable<DocTemplate> = this.select(state => state.template)
+  readonly selectedElement$: Observable<Element|undefined> = this.select(state => state.selectedElement)
   readonly pageEvent$: EventEmitter<PageEvent> = new EventEmitter<PageEvent>()
 
   readonly zoomIn = this.updater((state) => ({
@@ -86,9 +90,17 @@ export class EditorStore extends ComponentStore<EditorState> {
     }
   })
 
+  readonly selectElement = this.updater((state, elementId: string) => {
+    return {
+      ...state,
+      selectedElement: state.elements.find(el => el.id === elementId)
+    }
+  })
+
   readonly clearEditableElement = this.updater((state) => {
     return {
       ...state,
+      selectedElement: undefined,
       elements: [
         ...state.elements.map((el: Element) => {
           el.editable = false

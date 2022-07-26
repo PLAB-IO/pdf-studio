@@ -51,6 +51,7 @@ export abstract class AbstractElementComponent implements OnInit {
       event: 'HOVER_ENTER',
       elementId: this.elementId,
       pageNo: this.element.pageNo,
+      allPages: this.element.allPages,
       offsetWidth: this.el.nativeElement.offsetWidth,
       offsetHeight: this.el.nativeElement.offsetHeight,
       x: this.element.x,
@@ -63,6 +64,7 @@ export abstract class AbstractElementComponent implements OnInit {
       event: 'HOVER_LEAVE',
       elementId: this.elementId,
       pageNo: this.element.pageNo,
+      allPages: this.element.allPages,
       offsetWidth: this.el.nativeElement.offsetWidth,
       offsetHeight: this.el.nativeElement.offsetHeight,
       x: this.element.x,
@@ -91,6 +93,17 @@ export abstract class AbstractElementComponent implements OnInit {
 
   private async onMouseUp(e: {stopPropagation: Function }) {
     e.stopPropagation()
+    this.editorStore.selectElement(this.elementId)
+    this.editorStore.pageEvent$.emit({
+      event: 'SELECTED',
+      elementId: this.elementId,
+      pageNo: this.element.pageNo,
+      allPages: this.element.allPages,
+      offsetWidth: this.el.nativeElement.offsetWidth,
+      offsetHeight: this.el.nativeElement.offsetHeight,
+      x: this.element.x,
+      y: this.element.y,
+    })
 
     if (!this.element.editable) {
       this.editorStore.patchElement({

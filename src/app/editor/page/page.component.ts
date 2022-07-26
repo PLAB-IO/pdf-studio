@@ -32,6 +32,7 @@ export class PageComponent implements OnInit {
   public pageHeight: string = '841.89pt'
   public pageWidth: string = '595.28pt'
   public hoverFramePosition!: null | {height: string, width: string, transform: string}
+  public selectedFramePosition!: null | {height: string, width: string, transform: string}
 
   public readonly maxHeight = 841.89
   public readonly maxWidth = 595.28
@@ -48,11 +49,16 @@ export class PageComponent implements OnInit {
 
   ngOnInit(): void {
     this.elements$ = this.editorStore.elements$.pipe(
-      map(elements => elements.filter(el => el.pageNo === this.pageNo))
+      map(elements => elements.filter(el => el.pageNo === this.pageNo || el.allPages))
     )
+    this.editorStore.selectedElement$.subscribe(async element => {
+      if (!element) {
+        this.selectedFramePosition = null
+      }
+    })
     this.editorStore.pageEvent$
       .pipe(
-        filter(pageEvent => pageEvent.pageNo === this.pageNo)
+        filter(pageEvent => pageEvent.pageNo === this.pageNo || pageEvent.allPages)
       )
       .subscribe(async pageEvent => {
         if (pageEvent.event === 'HOVER_ENTER') {
@@ -60,6 +66,14 @@ export class PageComponent implements OnInit {
         }
         if (pageEvent.event === 'HOVER_LEAVE') {
           await this.hoverElement(pageEvent, false)
+        }
+        if (pageEvent.event === 'SELECTED') {
+          this.selectedFramePosition = await PageComponent.computeFrameBoxPosition(
+            pageEvent.offsetWidth,
+            pageEvent.offsetHeight,
+            pageEvent.x,
+            pageEvent.y,
+          )
         }
       })
 

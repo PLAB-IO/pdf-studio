@@ -12,6 +12,7 @@ export type Element = {
   y: number
   value: string
   opts: TextOptions
+  allPages: boolean
   pageNo: number
   editable: boolean
 }

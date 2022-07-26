@@ -1,5 +1,5 @@
 import {Component, HostListener, OnInit} from '@angular/core'
-import {ElementType} from '../shared/model/element.model'
+import {Element, ElementType} from '../shared/model/element.model'
 import {Observable} from "rxjs"
 import {DocTemplate, EditorStore} from "../shared/store/editor.store"
 
@@ -14,6 +14,8 @@ export class EditorComponent implements OnInit {
   public pageNbr$: Observable<number> = this.editorStore.pagesNbr$
   public pagesNo: number[] = []
   public template!: DocTemplate
+  public selectedElement$: Observable<Element | undefined> = this.editorStore.selectedElement$
+  public optPanelOpened = false
 
   constructor(
     private readonly editorStore: EditorStore,
@@ -21,6 +23,11 @@ export class EditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.editorStore.template$.subscribe(tpl => this.template = tpl)
+    this.selectedElement$.subscribe(element => {
+      if (element) {
+        this.optPanelOpened = true
+      }
+    })
     this.pageNbr$.subscribe((pageNbr: number) => {
       const pagesNo = []
       for (let p = 1; p <= pageNbr; p++) {
@@ -38,6 +45,7 @@ export class EditorComponent implements OnInit {
         fontSize: 32,
         bold: true,
       },
+      allPages: false,
       editable: false,
       pageNo: 1,
     })
@@ -49,6 +57,7 @@ export class EditorComponent implements OnInit {
       y: 50,
       value: 'Second Title',
       opts: {},
+      allPages: false,
       editable: false,
       pageNo: 2,
     })

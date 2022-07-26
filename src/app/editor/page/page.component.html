@@ -11,6 +11,14 @@
        [style.transform]="hoverFramePosition?.transform">
     <div class="frame border-2 border-studr-primary"></div>
   </div>
+
+  <div class="elementFrame" *ngIf="!!selectedFramePosition"
+       [style.width]="selectedFramePosition?.width"
+       [style.height]="selectedFramePosition?.height"
+       [style.transform]="selectedFramePosition?.transform">
+    <div class="frame border-2 border-studr-primary border-dashed"></div>
+  </div>
+
   <ng-container *ngFor="let el of (elements$ | async)">
     <app-text-element *ngIf="'text' === el.type"
                       [elementId]="el.id"
