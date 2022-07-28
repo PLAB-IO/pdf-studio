@@ -38,7 +38,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        'stdur-bg': '#F7F8FC',
+        'stdur-bg': 'rgb(254, 249, 244)',
         'studr-primary': '#8AE6E6',
         'studr-accent': '#e1fcfc',
         white: colors.white,
