@@ -36,22 +36,21 @@
     </button>
   </section>
 
-  <section class="pl-10 flex flex-row flex-wrap"
-           [ngClass]="{
-              'w-3/5': optPanelOpened,
-              'w-full': !optPanelOpened
+  <section class="pl-10 w-full overflow-scroll"
+           [ngStyle]="{
+            'height': 'calc(100vh - 108px)'
            }">
-    <app-page *ngFor="let pageNo of pagesNo"
-              [pageNo]="pageNo"></app-page>
+    <div class="flex flex-row flex-nowrap">
+      <app-page *ngFor="let pageNo of pagesNo"
+                [pageNo]="pageNo"></app-page>
+    </div>
   </section>
 
-  <section class="sticky self-start top-0 place-self-end transition transform-gpu"
+  <section class="absolute self-start top-0 right-0 w-[260px] transition transform-gpu"
            [ngClass]="{
-              'translate-x-full': !optPanelOpened,
-              'hidden': !optPanelOpened,
-              'w-2/5': optPanelOpened
-            }">
-    <app-panel-options (onClose)="optPanelOpened = false"></app-panel-options>
+              'translate-x-full': !optPanelOpened
+           }">
+      <app-panel-options (onClose)="optPanelOpened = false"></app-panel-options>
   </section>
 </div>
 

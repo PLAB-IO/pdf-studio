@@ -14,6 +14,7 @@ export type dragEvent = {
 @Component({ template: '' })
 export abstract class AbstractElementComponent implements OnInit {
   @Input() elementId!: string
+  @Input() pageNo!: number
   @Output() dragEvent: EventEmitter<dragEvent> = new EventEmitter<dragEvent>()
 
   public zoom$: Observable<number> = this.editorStore.zoom$
@@ -50,7 +51,7 @@ export abstract class AbstractElementComponent implements OnInit {
     this.editorStore.pageEvent$.emit({
       event: 'HOVER_ENTER',
       elementId: this.elementId,
-      pageNo: this.element.pageNo,
+      pageNo: this.pageNo,
       allPages: this.element.allPages,
       offsetWidth: this.el.nativeElement.offsetWidth,
       offsetHeight: this.el.nativeElement.offsetHeight,
@@ -63,7 +64,7 @@ export abstract class AbstractElementComponent implements OnInit {
     this.editorStore.pageEvent$.emit({
       event: 'HOVER_LEAVE',
       elementId: this.elementId,
-      pageNo: this.element.pageNo,
+      pageNo: this.pageNo,
       allPages: this.element.allPages,
       offsetWidth: this.el.nativeElement.offsetWidth,
       offsetHeight: this.el.nativeElement.offsetHeight,
@@ -81,6 +82,17 @@ export abstract class AbstractElementComponent implements OnInit {
       return
     }
 
+    this.editorStore.selectElement(this.elementId)
+    this.editorStore.pageEvent$.emit({
+      event: 'SELECTED',
+      elementId: this.elementId,
+      pageNo: this.pageNo,
+      allPages: this.element.allPages,
+      offsetWidth: this.el.nativeElement.offsetWidth,
+      offsetHeight: this.el.nativeElement.offsetHeight,
+      x: this.element.x,
+      y: this.element.y,
+    })
     this.dragEnabled = true
     this.dragEvent.emit({
       nativeElement: this.el,
@@ -93,17 +105,6 @@ export abstract class AbstractElementComponent implements OnInit {
 
   private async onMouseUp(e: {stopPropagation: Function }) {
     e.stopPropagation()
-    this.editorStore.selectElement(this.elementId)
-    this.editorStore.pageEvent$.emit({
-      event: 'SELECTED',
-      elementId: this.elementId,
-      pageNo: this.element.pageNo,
-      allPages: this.element.allPages,
-      offsetWidth: this.el.nativeElement.offsetWidth,
-      offsetHeight: this.el.nativeElement.offsetHeight,
-      x: this.element.x,
-      y: this.element.y,
-    })
 
     if (!this.element.editable) {
       this.editorStore.patchElement({

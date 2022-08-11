@@ -35,7 +35,7 @@ export class EditorStore extends ComponentStore<EditorState> {
       zoom: 0.75,
       elements: [],
       selectedElement: undefined,
-      pagesNbr: 2,
+      pagesNbr: 3,
       template: {
         name: 'Certificate NAP',
         updatedAt: '2020-07-10 15:00:00.000',

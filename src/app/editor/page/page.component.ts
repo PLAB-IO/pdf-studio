@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core'
 import {Element} from "../shared/model/element.model"
 import {dragEvent} from "../elements/abstract-element.component"
-import {filter, firstValueFrom, map, Observable} from "rxjs"
+import {filter, firstValueFrom, map, Observable, take, tap} from "rxjs"
 import {EditorStore, PageEvent} from "../shared/store/editor.store"
 
 // Mouse enter element -> dispatch hover element position information
@@ -58,7 +58,7 @@ export class PageComponent implements OnInit {
     })
     this.editorStore.pageEvent$
       .pipe(
-        filter(pageEvent => pageEvent.pageNo === this.pageNo || pageEvent.allPages)
+        filter(pageEvent => pageEvent.pageNo === this.pageNo),
       )
       .subscribe(async pageEvent => {
         if (pageEvent.event === 'HOVER_ENTER') {
@@ -108,6 +108,7 @@ export class PageComponent implements OnInit {
       this.draggedElementEvent.element.x,
       this.draggedElementEvent.element.y,
     )
+    this.selectedFramePosition = this.hoverFramePosition
   }
 
   onPageClick(e: any) {

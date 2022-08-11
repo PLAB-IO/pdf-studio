@@ -61,6 +61,31 @@ export class EditorComponent implements OnInit {
       editable: false,
       pageNo: 2,
     })
+
+    this.editorStore.putElement({
+      id: '003',
+      type: ElementType.text,
+      x: 20,
+      y: 400,
+      value: 'Youi',
+      opts: {},
+      allPages: false,
+      editable: false,
+      pageNo: 3,
+    })
+
+
+    this.editorStore.putElement({
+      id: '004',
+      type: ElementType.text,
+      x: 150,
+      y: 50,
+      value: 'Layla',
+      opts: {},
+      allPages: true,
+      editable: false,
+      pageNo: 3,
+    })
   }
 
   @HostListener('wheel', ['$event'])

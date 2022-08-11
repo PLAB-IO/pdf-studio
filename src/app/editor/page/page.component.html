@@ -21,6 +21,7 @@
 
   <ng-container *ngFor="let el of (elements$ | async)">
     <app-text-element *ngIf="'text' === el.type"
+                      [pageNo]="pageNo"
                       [elementId]="el.id"
                       (dragEvent)="onDragEvent($event)"></app-text-element>
   </ng-container>
