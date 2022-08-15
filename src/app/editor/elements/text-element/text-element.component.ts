@@ -3,11 +3,11 @@ import {AbstractElementComponent} from "../abstract-element.component"
 import {EditorStore} from "../../shared/store/editor.store"
 
 export type TextOptions = {
-  fontFamily?: string
-  fontSize?: number
-  bold?: boolean
-  color?: string
-  opacity?: number
+  fontFamily: string
+  fontSize: number
+  bold: boolean
+  color: string
+  textAlign: 'left' | 'center' | 'right'
 }
 
 @Component({
@@ -36,9 +36,6 @@ export class TextElementComponent extends AbstractElementComponent implements On
       }
       if (options?.color) {
         this.el.nativeElement.style.color = options.color
-      }
-      if (options?.opacity) {
-        this.el.nativeElement.style.opacity = options.opacity
       }
     })
   }

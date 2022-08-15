@@ -43,6 +43,9 @@
     <div class="flex flex-row flex-nowrap">
       <app-page *ngFor="let pageNo of pagesNo"
                 [pageNo]="pageNo"></app-page>
+      <div>
+        <div [style.width]="'250px'"></div>
+      </div>
     </div>
   </section>
 

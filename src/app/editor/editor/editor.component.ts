@@ -14,7 +14,7 @@ export class EditorComponent implements OnInit {
   public pageNbr$: Observable<number> = this.editorStore.pagesNbr$
   public pagesNo: number[] = []
   public template!: DocTemplate
-  public selectedElement$: Observable<Element | undefined> = this.editorStore.selectedElement$
+  public selectedElementId$: Observable<string | undefined> = this.editorStore.selectedElementId$
   public optPanelOpened = false
 
   constructor(
@@ -23,8 +23,8 @@ export class EditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.editorStore.template$.subscribe(tpl => this.template = tpl)
-    this.selectedElement$.subscribe(element => {
-      if (element) {
+    this.selectedElementId$.subscribe(elementId => {
+      if (elementId) {
         this.optPanelOpened = true
       }
     })
@@ -42,8 +42,11 @@ export class EditorComponent implements OnInit {
       y: 10,
       value: '',
       opts: {
+        fontFamily: 'Arial',
         fontSize: 32,
         bold: true,
+        color: '#000000',
+        textAlign: 'center'
       },
       allPages: false,
       editable: false,
@@ -56,35 +59,16 @@ export class EditorComponent implements OnInit {
       x: 200,
       y: 50,
       value: 'Second Title',
-      opts: {},
-      allPages: false,
-      editable: false,
-      pageNo: 2,
-    })
-
-    this.editorStore.putElement({
-      id: '003',
-      type: ElementType.text,
-      x: 20,
-      y: 400,
-      value: 'Youi',
-      opts: {},
-      allPages: false,
-      editable: false,
-      pageNo: 3,
-    })
-
-
-    this.editorStore.putElement({
-      id: '004',
-      type: ElementType.text,
-      x: 150,
-      y: 50,
-      value: 'Layla',
-      opts: {},
+      opts: {
+        fontFamily: 'Arial',
+        fontSize: 22,
+        bold: true,
+        color: '#3e78e8',
+        textAlign: 'left'
+      },
       allPages: true,
       editable: false,
-      pageNo: 3,
+      pageNo: 2,
     })
   }
 

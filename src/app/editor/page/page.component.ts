@@ -51,8 +51,8 @@ export class PageComponent implements OnInit {
     this.elements$ = this.editorStore.elements$.pipe(
       map(elements => elements.filter(el => el.pageNo === this.pageNo || el.allPages))
     )
-    this.editorStore.selectedElement$.subscribe(async element => {
-      if (!element) {
+    this.editorStore.selectedElementId$.subscribe(async elementId => {
+      if (!elementId) {
         this.selectedFramePosition = null
       }
     })

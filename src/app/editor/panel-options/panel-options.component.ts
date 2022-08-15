@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core'
 import {EditorStore} from "../shared/store/editor.store"
-import {Observable} from "rxjs"
+import {Observable, of} from "rxjs"
 import {Element} from "../shared/model/element.model"
 
 @Component({
@@ -11,15 +11,22 @@ import {Element} from "../shared/model/element.model"
 export class PanelOptionsComponent implements OnInit {
 
   @Output() onClose: EventEmitter<boolean> = new EventEmitter<boolean>()
-  public selectedElement$: Observable<Element | undefined> = this.editorStore.selectedElement$
   public selectedElement: Element | undefined
+  public selectedElement$: Observable<Element | undefined> = of(undefined)
 
   constructor(
     private readonly editorStore: EditorStore,
   ) {}
 
   ngOnInit(): void {
-    this.selectedElement$.subscribe(element => this.selectedElement = element)
+    this.editorStore.selectedElementId$.subscribe(elementId => {
+      if (!elementId) {
+        this.selectedElement$ = of(undefined)
+        return
+      }
+      this.selectedElement$ = this.editorStore.getElement(elementId)
+      this.selectedElement$.subscribe(element => this.selectedElement = element)
+    })
   }
 
   close() {
@@ -37,6 +44,21 @@ export class PanelOptionsComponent implements OnInit {
         value: event.target.checked,
       })
     }
+  }
+
+  patchOpts(opt: string, value: string | number) {
+    if (!this.selectedElement) {
+      return
+    }
+    const opts = {
+      ...this.selectedElement.opts,
+      [opt]: value,
+    }
+    this.editorStore.patchElement({
+      id: this.selectedElement.id,
+      key: 'opts',
+      value: opts,
+    })
   }
 
 }

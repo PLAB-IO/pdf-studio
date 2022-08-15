@@ -11,7 +11,7 @@ export type DocTemplate = {
 export type EditorState = {
   zoom: number
   elements: Element[]
-  selectedElement: Element | undefined
+  selectedElementId: string | undefined
   pagesNbr: number
   template: DocTemplate
 }
@@ -34,8 +34,8 @@ export class EditorStore extends ComponentStore<EditorState> {
     super({
       zoom: 0.75,
       elements: [],
-      selectedElement: undefined,
-      pagesNbr: 3,
+      selectedElementId: undefined,
+      pagesNbr: 2,
       template: {
         name: 'Certificate NAP',
         updatedAt: '2020-07-10 15:00:00.000',
@@ -47,7 +47,7 @@ export class EditorStore extends ComponentStore<EditorState> {
   readonly pagesNbr$: Observable<number> = this.select(state => state.pagesNbr)
   readonly elements$: Observable<Element[]> = this.select(state => state.elements)
   readonly template$: Observable<DocTemplate> = this.select(state => state.template)
-  readonly selectedElement$: Observable<Element|undefined> = this.select(state => state.selectedElement)
+  readonly selectedElementId$: Observable<string|undefined> = this.select(state => state.selectedElementId)
   readonly pageEvent$: EventEmitter<PageEvent> = new EventEmitter<PageEvent>()
 
   readonly zoomIn = this.updater((state) => ({
@@ -93,7 +93,7 @@ export class EditorStore extends ComponentStore<EditorState> {
   readonly selectElement = this.updater((state, elementId: string) => {
     return {
       ...state,
-      selectedElement: state.elements.find(el => el.id === elementId)
+      selectedElementId: elementId,
     }
   })
 
