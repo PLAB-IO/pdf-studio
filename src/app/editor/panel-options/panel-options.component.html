@@ -44,6 +44,19 @@
 
     <div class="bg-white px-4 py-3 border-t border-slate-600">
       <h3>Font</h3>
+      <div class="inline-flex gap-3 items-center">
+        <button class="rounded-full w-6 h-6 hover:opacity-60"
+                [ngStyle]="{'background-color': selectedElement.opts?.color}">&nbsp;</button>
+
+        <app-input [class]="'w-16'" [type]="'number'"
+                   [value]="selectedElement.opts.fontSize"
+                   (onChange)="patchOpts('fontSize', $event)"></app-input>
+
+        <app-select [class]="'w-32'"
+                    [value]="selectedElement.opts.bold ? 'bold' : 'regular'"
+                    [options]="[{label: 'Regular', value: 'regular'}, {label: 'Bold', value: 'bold'}]"
+                    (onChange)="patchOpts('bold', $event === 'bold')"></app-select>
+      </div>
     </div>
 
     <div class="bg-white px-4 py-3 border-t border-slate-600">

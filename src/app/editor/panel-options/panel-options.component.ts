@@ -46,7 +46,7 @@ export class PanelOptionsComponent implements OnInit {
     }
   }
 
-  patchOpts(opt: string, value: string | number) {
+  patchOpts(opt: string, value: string | number | boolean) {
     if (!this.selectedElement) {
       return
     }
@@ -61,4 +61,7 @@ export class PanelOptionsComponent implements OnInit {
     })
   }
 
+  test(val: any) {
+    console.log(val)
+  }
 }
