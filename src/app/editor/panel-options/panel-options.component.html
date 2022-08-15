@@ -44,9 +44,12 @@
 
     <div class="bg-white px-4 py-3 border-t border-slate-600">
       <h3>Font</h3>
-      <div class="inline-flex gap-3 items-center">
+      <div class="inline-flex gap-3 items-center relative">
         <button class="rounded-full w-6 h-6 hover:opacity-60"
-                [ngStyle]="{'background-color': selectedElement.opts?.color}">&nbsp;</button>
+                [ngStyle]="{'background-color': selectedElement.opts?.color}"
+                (click)="fontColorPicker.toggle();$event.stopPropagation();">&nbsp;</button>
+        <app-color-picker [value]="selectedElement.opts?.color || '#000000'" #fontColorPicker
+                          (onChange)="patchOpts('color', $event)"></app-color-picker>
 
         <app-input [class]="'w-16'" [type]="'number'"
                    [value]="selectedElement.opts.fontSize"
