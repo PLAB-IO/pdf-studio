@@ -1,0 +1,28 @@
+<div class="page bg-white border-2 border-studr-primary rounded-xl shadow-md transition-transform cursor-crosshair"
+     [style.height]="pageHeight"
+     [style.width]="pageWidth"
+     [style.transform]="'scale(' + (zoom$ | async) + ')'"
+     (mousemove)="onPageMouseMove($event)"
+     (mouseup)="onPageClick($event)">
+
+  <div class="elementFrame" *ngIf="!!hoverFramePosition"
+       [style.width]="hoverFramePosition?.width"
+       [style.height]="hoverFramePosition?.height"
+       [style.transform]="hoverFramePosition?.transform">
+    <div class="frame border-2 border-studr-primary"></div>
+  </div>
+
+  <div class="elementFrame" *ngIf="!!selectedFramePosition"
+       [style.width]="selectedFramePosition?.width"
+       [style.height]="selectedFramePosition?.height"
+       [style.transform]="selectedFramePosition?.transform">
+    <div class="frame border-2 border-studr-primary border-dashed"></div>
+  </div>
+
+  <ng-container *ngFor="let el of (elements$ | async)">
+    <app-text-element *ngIf="'text' === el.type"
+                      [pageNo]="pageNo"
+                      [elementId]="el.id"
+                      (dragEvent)="onDragEvent($event)"></app-text-element>
+  </ng-container>
+</div>

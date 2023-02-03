@@ -1,0 +1,7 @@
+<select class="{{class}} rounded-md border border-slate-500 px-2 py-1.5 bg-white"
+       [(ngModel)]="value"
+       (ngModelChange)="onChange.emit($event)">
+  <option [value]="option.value"
+          [selected]="value === option.value"
+          *ngFor="let option of options">{{option.label}}</option>
+</select>

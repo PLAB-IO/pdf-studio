@@ -1,0 +1,24 @@
+@import "../../../styles";
+
+:host {
+  user-select: none;
+  margin-right: 2em;
+  margin-bottom: 2em;
+
+  .page {
+    position: relative;
+    overflow: hidden;
+    transform-origin: 0 0;
+  }
+
+  .elementFrame {
+    position: absolute;
+    .frame {
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      bottom: -1px;
+      left: -1px;
+    }
+  }
+}

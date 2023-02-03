@@ -1,0 +1,98 @@
+<section class="bg-studr-accent rounded-tl-lg rounded-bl-lg shadow-lg relative">
+  <div class="absolute right-4 top-3">
+    <button (click)="close()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6
+  flex-none h-18 w-18 text-blue-500 hover:scale-125 hover:cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+
+  <div *ngIf="!selectedElement">
+    <h3 class="capitalize border-b border-slate-600 pb-1.5 px-4 py-3">Document</h3>
+  </div>
+
+  <div *ngIf="selectedElement">
+    <h3 class="capitalize border-b border-slate-600 pb-1.5 px-4 py-3">{{selectedElement.type}}</h3>
+
+    <div class="bg-white px-4 py-3">
+      <h3>Position</h3>
+      <div class="bg-white grid gap-1.5 grid-cols-2 grid-rows-2 place-content-center p-3">
+        <div>
+          <span class="text-gray-400">X</span><span class="pl-2">{{selectedElement.x}}</span>
+        </div>
+        <div>
+          <span class="text-gray-400">Y</span><span class="pl-2">{{selectedElement.y}}</span>
+        </div>
+        <div>
+          <span class="text-gray-400">W</span><span class="pl-2">n/a</span>
+        </div>
+        <div>
+          <span class="text-gray-400">H</span><span class="pl-2">n/a</span>
+        </div>
+      </div>
+      <div>
+        <input id="repeat-all-pages-checkbox" type="checkbox" value=""
+               (change)="onChangeCheckbox($event, 'allPages')"
+               [checked]="selectedElement.allPages"
+               class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300
+               focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2
+               dark:bg-gray-700 dark:border-gray-600">
+        <label for="repeat-all-pages-checkbox" class="ml-2 text-sm">Repeat on all pages</label>
+      </div>
+    </div>
+
+    <div class="bg-white px-4 py-3 border-t border-slate-600">
+      <h3>Font</h3>
+      <div class="inline-flex gap-1.5 items-center relative">
+        <button class="rounded-full w-6 h-6 hover:opacity-60"
+                [ngStyle]="{'background-color': selectedElement.opts?.color}"
+                (click)="fontColorPicker.toggle();$event.stopPropagation();">&nbsp;</button>
+        <app-color-picker [value]="selectedElement.opts?.color || '#000000'" #fontColorPicker
+                          (onChange)="patchOpts('color', $event)"></app-color-picker>
+
+        <app-input [class]="'w-16'" [type]="'number'"
+                   [value]="selectedElement.opts.fontSize"
+                   (onChange)="patchOpts('fontSize', $event)"></app-input>
+
+        <app-select [class]="'w-32'"
+                    [value]="selectedElement.opts.bold ? 'bold' : 'regular'"
+                    [options]="[{label: 'Regular', value: 'regular'}, {label: 'Bold', value: 'bold'}]"
+                    (onChange)="patchOpts('bold', $event === 'bold')"></app-select>
+      </div>
+    </div>
+
+    <div class="bg-white px-4 py-3 border-t border-slate-600">
+      <h3>Text alignment</h3>
+      <div class="rounded-md border border-slate-500 inline-flex gap-1 mt-1">
+        <button class="p-1.5" [ngClass]="{
+          'bg-studr-accent': selectedElement.opts?.textAlign === 'left'
+          }" (click)="patchOpts('textAlign', 'left')">
+          <svg class="h-6 w-6 fill-gray-600" fill="none" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M5 7.5C5 7.22386 5.22386 7 5.5 7H18.5C18.7761 7 19 7.22386 19 7.5C19 7.77614 18.7761 8 18.5 8H5.5C5.22386 8 5 7.77614 5 7.5ZM5 12.5C5 12.2239 5.22386 12 5.5 12H14.5C14.7761 12 15 12.2239 15 12.5C15 12.7761 14.7761 13 14.5 13H5.5C5.22386 13 5 12.7761 5 12.5ZM5.5 17C5.22386 17 5 17.2239 5 17.5C5 17.7761 5.22386 18 5.5 18H10.5C10.7761 18 11 17.7761 11 17.5C11 17.2239 10.7761 17 10.5 17H5.5Z"></path>
+          </svg>
+        </button>
+
+        <button class="p-1.5" [ngClass]="{
+          'bg-studr-accent': selectedElement.opts?.textAlign === 'center'
+          }" (click)="patchOpts('textAlign', 'center')">
+          <svg class="h-6 w-6 fill-gray-600" fill="none" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M19 7.5C19 7.22386 18.7761 7 18.5 7H5.5C5.22386 7 5 7.22386 5 7.5C5 7.77614 5.22386 8 5.5 8H18.5C18.7761 8 19 7.77614 19 7.5Z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M16 12.5C16 12.2239 15.7761 12 15.5 12H8.5C8.22386 12 8 12.2239 8 12.5C8 12.7761 8.22386 13 8.5 13H15.5C15.7761 13 16 12.7761 16 12.5Z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M14 17.5C14 17.2239 13.7761 17 13.5 17H10.5C10.2239 17 10 17.2239 10 17.5C10 17.7761 10.2239 18 10.5 18H13.5C13.7761 18 14 17.7761 14 17.5Z"></path>
+          </svg>
+        </button>
+
+        <button class="p-1.5" [ngClass]="{
+          'bg-studr-accent': selectedElement.opts?.textAlign === 'right'
+          }" (click)="patchOpts('textAlign', 'right')">
+          <svg class="h-6 w-6 fill-gray-600" fill="none" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M19 7.5C19 7.22386 18.7761 7 18.5 7H5.5C5.22386 7 5 7.22386 5 7.5C5 7.77614 5.22386 8 5.5 8H18.5C18.7761 8 19 7.77614 19 7.5ZM19 12.5C19 12.2239 18.7761 12 18.5 12H9.5C9.22386 12 9 12.2239 9 12.5C9 12.7761 9.22386 13 9.5 13H18.5C18.7761 13 19 12.7761 19 12.5ZM18.5 17C18.7761 17 19 17.2239 19 17.5C19 17.7761 18.7761 18 18.5 18H13.5C13.2239 18 13 17.7761 13 17.5C13 17.2239 13.2239 17 13.5 17H18.5Z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-white px-4 py-3 border-t border-slate-600">
+      <h3>Data Source</h3>
+    </div>
+  </div>
+</section>

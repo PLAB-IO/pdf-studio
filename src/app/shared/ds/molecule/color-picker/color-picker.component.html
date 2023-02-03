@@ -1,0 +1,21 @@
+<div role="tooltip"
+     [ngClass]="{
+        'invisible': !visible,
+        'visible': visible,
+        'opacity-0': !visible,
+        'opacity-100': visible
+      }"
+     class="inline-block absolute p-2 z-10 -left-40 -bottom-20 w-40 text-sm bg-white rounded-lg border border-gray-200
+     shadow-sm transition-opacity duration-300 dark:border-gray-600 bg-gray-100">
+  <div class="gap-1.5 inline-flex">
+    <button *ngFor="let color of favColors"
+            [style.background-color]="color"
+            [ngClass]="{
+              'border-studr-primary': color === value,
+              'border-slate-600': color !== value
+            }"
+            (click)="selectColor(color)"
+            class="rounded-full w-6 h-6 hover:opacity-60 border"></button>
+  </div>
+  <app-input class="mt-2 w-full" [value]="value" (onChange)="selectColor($event.toString())"></app-input>
+</div>
